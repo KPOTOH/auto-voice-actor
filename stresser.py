@@ -104,7 +104,7 @@ def _move_stress_symbol(stressed_text: str):
     return new_text
 
 
-def stressing(text: str, accuracy_threshold: float):
+def stressing(text: str, accuracy_threshold=0.75):
     stressed_text = default_stressing(text, accuracy_threshold)
     stressed_text = stress_finisher(stressed_text)
     stressed_text = move_stress_symbol(stressed_text)

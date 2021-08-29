@@ -8,10 +8,6 @@ from scipy.io.wavfile import write
 from iteration_utilities import deepflatten
 
 
-# def split_sentence(sentence: str, max_size: int):
-#     assert len(sentence) < max_size
-
-
 def split_text(text: str, max_size=150, punctuation=None) -> list:
     """ split text to batches of <[max_size] chars (rnn/cnn limit) """
     n = len(text)
@@ -42,10 +38,6 @@ def expand_text_parts(parts: list) -> list:
     return normal_parts
 
 
-# example_text = 'Я уеду жить в Лондон! А может быть не в Лондон. Буду там по Биг Бену часы сверять; он, наверняка, работает как атомные часы. Безпритязательное произношение?'
-example_text = 'Сейчас в ВК происходит активное обсуждение студентами и их родителями вопроса об "уплотнении" , чтобы дать возможность заселиться тем студентам, которые не смогут заселиться в общежития, ввиду отсутствия свободных мест. Мы также хотели бы узнать мнение об этом, как у студентов, проживающих в общежитиях, так и у студентов, нуждающихся в общежитиях. Цель нашего опроса узнать, как вы относитесь к установке двухъярусной кровати в комнате/квартире общежития вместо ОДНОЙ одноярусной, чтобы заселить студентов, нуждающихся в местах в общежитии? Таким образом, в общежитиях БФУ им. И. Канта увеличится на одно свободное место в каждой комнате/квартире, что даст возможность заселить всех нуждающихся в общежитиях студентов.'
-
-
 def make_audio(text_parts: List[str], language='ru', speaker='kseniya_16khz'):
     device = torch.device('cpu')
     # model, symbols, sample_rate, example_text, apply_tts = torch.hub.load(
@@ -73,7 +65,7 @@ def make_audio(text_parts: List[str], language='ru', speaker='kseniya_16khz'):
     return audio, sample_rate
 
 
-def voicer(text: str, filename: str = 'data/audio/aud.wav'):
+def voicing(text: str, filename='data/audio/aud.wav'):
     text_parts = split_text(text)
     text_parts = expand_text_parts(text_parts)
     audio, sample_rate = make_audio(text_parts)
@@ -81,4 +73,7 @@ def voicer(text: str, filename: str = 'data/audio/aud.wav'):
 
 
 if __name__ == "__main__":
-    voicer(example_text)
+    # example_text = 'Я уеду жить в Лондон! А может быть не в Лондон. Буду там по Биг Бену часы сверять; он, наверняка, работает как атомные часы. Безпритязательное произношение?'
+    example_text = 'Сейчас в ВК происходит активное обсуждение студентами и их родителями вопроса об "уплотнении" , чтобы дать возможность заселиться тем студентам, которые не смогут заселиться в общежития, ввиду отсутствия свободных мест. Мы также хотели бы узнать мнение об этом, как у студентов, проживающих в общежитиях, так и у студентов, нуждающихся в общежитиях. Цель нашего опроса узнать, как вы относитесь к установке двухъярусной кровати в комнате/квартире общежития вместо ОДНОЙ одноярусной, чтобы заселить студентов, нуждающихся в местах в общежитии? Таким образом, в общежитиях БФУ им. И. Канта увеличится на одно свободное место в каждой комнате/квартире, что даст возможность заселить всех нуждающихся в общежитиях студентов.'
+
+    voicing(example_text)
