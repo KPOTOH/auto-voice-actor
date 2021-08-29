@@ -1,2 +1,5 @@
 __pycache__
 env
+data/model
+data/audio
+aud.wav
