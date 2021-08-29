@@ -14,14 +14,14 @@ def split_text(text: str, max_size=150, punctuation=None) -> list:
     if n <= max_size:
         return [text]
 
-    punctuation = punctuation or ['...', '.', '!', '?', '?!', ';', ',']
+    punctuation = punctuation or ['\n', '...', '.', '!', '?', '?!', ';', ',']
 
     for mark in punctuation.copy():
         punctuation.remove(mark)
         if mark in text.rstrip('.?;!,'):
-            # print(mark)
             chanks = text.split(mark)
-            chanks = [x + mark for x in chanks[:-1]] + [chanks[-1]]
+            if mark != '\n':
+                chanks = [x + mark for x in chanks[:-1]] + [chanks[-1]]
             parts = [
                 split_text(
                     chank.lstrip(),
@@ -53,14 +53,20 @@ def make_audio(text_parts: List[str], language='ru', speaker='kseniya_16khz'):
         language=language,
         speaker=speaker
     )
-    audio = apply_tts(
-        texts=text_parts,
-        model=model,
-        sample_rate=sample_rate,
-        symbols=symbols,
-        device=device
-    )
-    audio_collection = [x.detach().numpy() for x in audio]
+    audio_collection = []
+    for i in range(0, len(text_parts), 4):
+        batch = text_parts[i: i+4]
+        print('Processing:', batch)
+        audio_sample = apply_tts(
+            texts=batch,
+            model=model,
+            sample_rate=sample_rate,
+            symbols=symbols,
+            device=device
+        )
+        for aud in audio_sample:
+            audio_collection.append(aud.detach().numpy())
+    
     audio = np.concatenate(audio_collection)
     return audio, sample_rate
 
@@ -73,7 +79,5 @@ def voicing(text: str, filename='data/audio/aud.wav'):
 
 
 if __name__ == "__main__":
-    # example_text = 'Я уеду жить в Лондон! А может быть не в Лондон. Буду там по Биг Бену часы сверять; он, наверняка, работает как атомные часы. Безпритязательное произношение?'
-    example_text = 'Сейчас в ВК происходит активное обсуждение студентами и их родителями вопроса об "уплотнении" , чтобы дать возможность заселиться тем студентам, которые не смогут заселиться в общежития, ввиду отсутствия свободных мест. Мы также хотели бы узнать мнение об этом, как у студентов, проживающих в общежитиях, так и у студентов, нуждающихся в общежитиях. Цель нашего опроса узнать, как вы относитесь к установке двухъярусной кровати в комнате/квартире общежития вместо ОДНОЙ одноярусной, чтобы заселить студентов, нуждающихся в местах в общежитии? Таким образом, в общежитиях БФУ им. И. Канта увеличится на одно свободное место в каждой комнате/квартире, что даст возможность заселить всех нуждающихся в общежитиях студентов.'
-
+    example_text = 'Я уеду жить в Лондон! Безпритязательное произношение?'
     voicing(example_text)
